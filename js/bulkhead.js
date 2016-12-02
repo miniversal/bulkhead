@@ -5,7 +5,7 @@ var facing = 'right';
 
 //Weapon Systems
 var bullets = bullets;
-var fireRate = 1000;
+var fireRate = 100;
 var nextFire = 0;
 
 var bulkhead = function(game){
@@ -19,6 +19,7 @@ bulkhead.prototype = {
 	create: function(){
 // GAME INIT
 		this.physics.startSystem(Phaser.Physics.P2JS);
+		//this.physics.startSystem(Phaser.Physics.ARCADE);
 		this.stage.backgroundColor = '#000000';
 		// this.scale.setScreenSize(true);
 		//bg = this.add.tileSprite(0, 0, 1920, 1920, 'background');
@@ -26,14 +27,14 @@ bulkhead.prototype = {
 
 		// COLLISION
 		//  Turn on impact events for the world, without this we get no collision callbacks
-		this.physics.p2.setImpactEvents(true);
-		this.physics.p2.restitution = 0.8;
-		alienCollisionGroup = this.physics.p2.createCollisionGroup();
-		playerCollisionGroup = this.physics.p2.createCollisionGroup();
-		bulletCollisionGroup = this.physics.p2.createCollisionGroup();
+		// this.physics.p2.setImpactEvents(true);
+		// this.physics.p2.restitution = 0.8;
+		// alienCollisionGroup = this.physics.p2.createCollisionGroup();
+		// playerCollisionGroup = this.physics.p2.createCollisionGroup();
+		// bulletCollisionGroup = this.physics.p2.createCollisionGroup();
 		//  This part is vital if you want the objects with their own collision groups to still collide with the world bounds
 		//  (which we do) - what this does is adjust the bounds to use its own collision group.
-		this.physics.p2.updateBoundsCollisionGroup();
+		//this.physics.p2.updateBoundsCollisionGroup();
 
 		// UI TEXT
 		// scoreString = 'SCORE: ';
@@ -53,12 +54,21 @@ bulkhead.prototype = {
 		ship.animations.add('right', [0,1], 10, true);
 		this.physics.p2.enable(ship, false);
 		ship.body.fixedRotation = true;
-		ship.body.setCollisionGroup(playerCollisionGroup);
-		ship.body.collides(alienCollisionGroup, destroyShip, this);
+		// ship.body.setCollisionGroup(playerCollisionGroup);
+		// ship.body.collides(alienCollisionGroup, destroyShip, this);
 
 		// WEAPONS
 		turret = this.add.sprite(ship.x+25, ship.y+35, 'turret');
 		turret.anchor.setTo(0.8, 0.5);
+
+		bullets = this.add.group();
+	    bullets.enableBody = true;
+	    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+	    bullets.createMultiple(30, 'bullet', 0, false);
+	    bullets.setAll('anchor.x', 0.5);
+	    bullets.setAll('anchor.y', 0.5);
+	    bullets.setAll('outOfBoundsKill', true);
+	    bullets.setAll('checkWorldBounds', true);
 
 		//Bring the ship to the front and then stack the weapon on top of it
 		ship.bringToTop();
@@ -93,8 +103,8 @@ bulkhead.prototype = {
         // ufos.forEachAlive(moveUFOs, this);
         // abductors.forEachAlive(moveAbductors, this);
 
-        turret.x = ship.x+7;
-	    turret.y = ship.y+5;
+        turret.x = ship.x;
+	    turret.y = ship.y;
     	turret.rotation = this.physics.arcade.angleToPointer(turret) - Math.PI;
 
         //Check for active boost
@@ -103,11 +113,15 @@ bulkhead.prototype = {
         }else{
         	shipSpeed=300;
         }
-        
-        if (fireButton.isDown){                      
-            //weapons[currentWeapon].fire(ship, facing);
-            //phaserBeam.play();
-        }
+
+		if (this.input.activePointer.isDown){
+			if (this.time.now > nextFire && bullets.countDead() > 0){
+				nextFire = this.time.now + fireRate;
+				var bullet = bullets.getFirstExists(false);
+				bullet.reset(turret.x, turret.y);
+				bullet.rotation = this.physics.arcade.moveToPointer(bullet, 1000, this.input.activePointer, 500);
+			}
+		}        
 
         if (cursors.down.isDown || downKey.isDown){
             ship.body.moveDown(shipSpeed);
@@ -162,3 +176,78 @@ function destroyShip(body1, body2){
         }
     }
 }
+
+//////////////////////////////////////////////////////////////////////////
+//  BULLETS
+//  This is a simple Sprite object that we set a few properties on
+//  It is fired by all of the Weapon classes
+//////////////////////////////////////////////////////////////////////////
+var Bullet = function (game, key) {
+    Phaser.Sprite.call(this, game, 0, 0, key);
+    this.texture.baseTexture.scaleMode = PIXI.scaleModes.NEAREST;
+    this.anchor.set(0.5);
+    this.checkWorldBounds = true;
+    this.outOfBoundsKill = true;
+    this.exists = false;
+    this.tracking = true;
+    this.scaleSpeed = 0;
+};
+
+Bullet.prototype = Object.create(Phaser.Sprite.prototype);
+Bullet.prototype.constructor = Bullet;
+
+Bullet.prototype.fire = function (x, y, angle, speed, gx, gy) {
+    gx = gx || 0;
+    gy = gy || 0;
+    this.body.setCollisionGroup(bulletCollisionGroup);
+    this.body.collides(alienCollisionGroup, destroyEnemy, this);
+    this.body.collides(ufoCollisionGroup, destroyEnemy, this);
+    this.body.collideWorldBounds = false;
+    this.body.sprite.checkWorldBounds = true;
+    this.body.sprite.outOfBoundsKill = true;
+    this.reset(x, y);
+    this.scale.set(1);
+    this.angle = angle;
+    this.body.rotation = 0;
+    this.body.force.x = Math.cos(angle) * speed;    
+    //this.body.force.y = Math.sin(angle) * speed;
+    this.body.gravity.set(gx, gy);
+};
+
+var Weapon = {};
+//////////////////////////////////////////////////////////////////////////
+//  WEAPONS
+//  Fires a streaming beam of lazers, very fast, in front of the ship //
+//////////////////////////////////////////////////////////////////////////
+
+Weapon.Beam = function (game) {
+    // Phaser.Group.call(this, game, game.world, 'Beam', false, true, Phaser.Physics.ARCADE);
+    Phaser.Group.call(this, game, game.world, 'Beam', false, true, Phaser.Physics.P2);
+    this.enableBody = true;
+    this.physicsBodyType = Phaser.Physics.P2JS;
+    this.nextFire = 0;
+    //this.bulletSpeed = 800;
+    this.fireRate = 130;
+
+    for (var i = 0; i < 64; i++) {
+        this.add(new Bullet(game, 'beam'), true);
+    }
+    return this;
+};
+
+Weapon.Beam.prototype = Object.create(Phaser.Group.prototype);
+Weapon.Beam.prototype.constructor = Weapon.Beam;
+
+Weapon.Beam.prototype.fire = function (source, direction) {
+    if (this.game.time.time < this.nextFire) { return; }
+    var x = source.x + 10;
+    var y = source.y + 10;
+    //compensate for which direction ship is facing
+    if(direction=='left'){
+        this.bulletSpeed=-50000;
+    }else{
+        this.bulletSpeed=50000;
+    }
+    this.getFirstExists(false).fire(x, y, 0, this.bulletSpeed, 0, 0);
+    this.nextFire = this.game.time.time + this.fireRate;
+};
