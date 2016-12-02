@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+       <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+       <!--  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" /> -->
+        <title></title>
+        <style type="text/css">
+        html { background:#000;overflow:hidden; }
+        #container { width:100%;padding-bottom:56.25%;position:relative; }
+        canvas { position:absolute;top:0;right:0;bottom:0;left:0;}
+        </style>
+        <script src="js/phaser.min.js"></script>
+        <script src="js/boot.js"></script>
+        <script src="js/preload.js"></script>
+        <script src="js/titleScreen.js"></script>
+        <script src="js/credits.js"></script>
+        <script src="js/bulkhead.js"></script>
+        <script src="js/gameover.js"></script>
+        <script>
+        (function(){
+            var game = new Phaser.Game(1024, 576, Phaser.CANVAS, 'BulkHead');
+            game.state.add('Boot', boot);
+            game.state.add('Preload', preload);
+            game.state.add('TitleScreen',titleScreen);
+            game.state.add('Credits',credits);
+            game.state.add('BulkHead',bulkhead);
+            game.state.add('GameOver', gameover);
+            game.state.start('Boot');
+        })();
+        </script>
+    </head>
+    <body>
+        <div id="container">
+            <div id="game"></div>
+        </div>
+    </body>
+</html>
