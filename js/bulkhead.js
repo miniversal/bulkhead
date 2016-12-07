@@ -58,8 +58,9 @@ bulkhead.prototype = {
 		// ship.body.collides(alienCollisionGroup, destroyShip, this);
 
 		// WEAPONS
-		turret = this.add.sprite(ship.x+25, ship.y+35, 'turret');
-		turret.anchor.setTo(0.8, 0.5);
+		turret = this.add.sprite(ship.x, ship.y, 'turret');
+        turret.anchor.setTo(0.8, 0.5);
+        this.physics.p2.enable(turret, false);
 
 		bullets = this.add.group();
 	    bullets.enableBody = true;
@@ -103,10 +104,6 @@ bulkhead.prototype = {
         // ufos.forEachAlive(moveUFOs, this);
         // abductors.forEachAlive(moveAbductors, this);
 
-        turret.x = ship.x;
-	    turret.y = ship.y;
-    	turret.rotation = this.physics.arcade.angleToPointer(turret) - Math.PI;
-
         //Check for active boost
         if(boostKey.isDown){
         	shipSpeed=475;
@@ -125,14 +122,17 @@ bulkhead.prototype = {
 
         if (cursors.down.isDown || downKey.isDown){
             ship.body.moveDown(shipSpeed);
+            turret.body.moveDown(shipSpeed);
         }
 
         if (cursors.up.isDown || upKey.isDown){
-            ship.body.moveUp(shipSpeed)
+            ship.body.moveUp(shipSpeed);
+            turret.body.moveUp(shipSpeed);
         }
         
         if (cursors.left.isDown || leftKey.isDown){
-            ship.body.moveLeft(shipSpeed)
+            ship.body.moveLeft(shipSpeed);
+            turret.body.moveLeft(shipSpeed);
             if(facing!='left') {
                 ship.animations.play('left');
                 facing='left';
@@ -140,11 +140,17 @@ bulkhead.prototype = {
         }
         if (cursors.right.isDown || rightKey.isDown){
             ship.body.moveRight(shipSpeed);
+            turret.body.moveRight(shipSpeed);
             if(facing!='right'){
                 ship.animations.play('right');
                 facing='right';
             }
         }
+
+        // turret.x = ship.x;
+        // turret.y = ship.y;
+        turret.rotation = this.physics.arcade.angleToPointer(turret) - Math.PI;
+
         this.game.world.wrap(ship, 0, true);                    
 	},
 	render: function(){
