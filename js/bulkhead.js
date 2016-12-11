@@ -51,20 +51,22 @@ bulkhead.prototype = {
 		
 		// PLAYER
 		ship = this.add.sprite(445, 200, 'ship');
+        //ship.scale.setTo(5,5);
         //ship.alpha = 0;
         //this.add.tween(ship).to({ alpha: 1}, 5000, Phaser.Easing.Linear.None, true, 3, 0, false);
         //We fade the player in slowly to give them a short invincibility
-		ship.animations.add('left', [2,3], 10, true);
-		ship.animations.add('right', [0,1], 10, true);
+		ship.animations.add('left', [0], 10, true);
+		ship.animations.add('right', [1], 10, true);
 		this.physics.p2.enable(ship, false);
 		ship.body.fixedRotation = true;
 		// ship.body.setCollisionGroup(playerCollisionGroup);
 		// ship.body.collides(alienCollisionGroup, destroyShip, this);
 
 		// WEAPONS
-		turret = this.add.sprite(ship.x, ship.y, 'turret');
+		turret = this.add.sprite(425, 208, 'turret');
         turret.anchor.setTo(0.8, 0.5);
-        this.physics.p2.enable(turret, false);
+        //turret.scale.setTo(5,5)
+        //this.physics.p2.enable(turret, false);
 
 		bullets = this.add.group();
 	    bullets.enableBody = true;
@@ -108,7 +110,7 @@ bulkhead.prototype = {
 		ship.body.setZeroVelocity();
         ship.body.rotation = 0;
 
-        turret.body.setZeroVelocity();
+        // turret.body.setZeroVelocity();
 
         // aliens.forEachAlive(moveEnemies, this);
         // ufos.forEachAlive(moveUFOs, this);
@@ -132,17 +134,17 @@ bulkhead.prototype = {
 
         if (cursors.down.isDown || downKey.isDown){
             ship.body.moveDown(shipSpeed);
-            turret.body.moveDown(shipSpeed);
+            // turret.body.moveDown(shipSpeed);
         }
 
         if (cursors.up.isDown || upKey.isDown){
             ship.body.moveUp(shipSpeed);
-            turret.body.moveUp(shipSpeed);
+            // turret.body.moveUp(shipSpeed);
         }
         
         if (cursors.left.isDown || leftKey.isDown){
             ship.body.moveLeft(shipSpeed);
-            turret.body.moveLeft(shipSpeed);
+            // turret.body.moveLeft(shipSpeed);
             if(facing!='left') {
                 ship.animations.play('left');
                 facing='left';
@@ -150,15 +152,15 @@ bulkhead.prototype = {
         }
         if (cursors.right.isDown || rightKey.isDown){
             ship.body.moveRight(shipSpeed);
-            turret.body.moveRight(shipSpeed);
+            // turret.body.moveRight(shipSpeed);
             if(facing!='right'){
                 ship.animations.play('right');
                 facing='right';
             }
         }
 
-        // turret.x = ship.x;
-        // turret.y = ship.y;
+        turret.x = ship.x;
+        turret.y = ship.y;
         turret.rotation = this.physics.arcade.angleToPointer(turret) - Math.PI;
 
         this.game.world.wrap(ship, 0, true);                    
