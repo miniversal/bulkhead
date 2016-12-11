@@ -11,7 +11,14 @@ preload.prototype = {
 
 		//TITLE ASSETS
 		this.game.load.image('logo','img/logo-miniversal.png');
+		
+		this.game.load.image('galaxy', 'img/sprite-galaxy-bg.jpg');
+		this.game.load.image('asteroids', 'img/asteroids.png');
+
 		this.game.load.spritesheet('star', 'img/star.png', 17, 17);
+
+		//DEBRIS
+		this.load.spritesheet('debris01', 'img/debris01.gif', 75 ,68, 23);
 		
 		//GAME ASSETS
 		// this.load.audio('beamSound', 'audio/beam3.mp3');

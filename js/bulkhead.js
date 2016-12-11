@@ -22,7 +22,9 @@ bulkhead.prototype = {
 		//this.physics.startSystem(Phaser.Physics.ARCADE);
 		this.stage.backgroundColor = '#000000';
 		// this.scale.setScreenSize(true);
-		//bg = this.add.tileSprite(0, 0, 1920, 1920, 'background');
+		bg = this.add.tileSprite(0, 0, 1920, 1920, 'galaxy');
+        bg2 = this.add.tileSprite(600, 200, 640, 480, 'asteroids');
+        bg2.anchor.setTo(0.5, 0.5);
 		this.world.setBounds(0, 0, 1920, 600);
 
 		// COLLISION
@@ -44,6 +46,8 @@ bulkhead.prototype = {
 		// AUDIO
 		//phaserBeam = this.add.audio('beamSound', 8, false, true);
 		//explosionSound = this.add.audio('explosion', 8, false, true);
+
+
 		
 		// PLAYER
 		ship = this.add.sprite(445, 200, 'ship');
@@ -96,9 +100,15 @@ bulkhead.prototype = {
 		//this.camera.deadzone = new Phaser.Rectangle(400, 1, 10, 10);		
 	},
 	update: function(){
+
+        //rotate asteroids
+        bg2.angle += 0.0125;
+
         this.gamescore = score;
 		ship.body.setZeroVelocity();
         ship.body.rotation = 0;
+
+        turret.body.setZeroVelocity();
 
         // aliens.forEachAlive(moveEnemies, this);
         // ufos.forEachAlive(moveUFOs, this);
