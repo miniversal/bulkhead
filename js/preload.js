@@ -29,7 +29,7 @@ preload.prototype = {
         this.load.image('bullet', 'img/bullet.png'); 
         //this.load.image('friend', 'img/sprite-friend.png');
         this.load.spritesheet('ship','img/frog5-scaled.png', 200, 101, 2);
-        this.load.image('turret', 'img/turret.png');
+        this.load.spritesheet('turret', 'img/turret.png', 282, 108, 2);
         // this.load.spritesheet('alien', 'img/sprite-enemy-1.png', 34, 44, 2);
         // this.load.spritesheet('abductor', 'img/sprite-enemy-retro.png', 25, 25, 2);
         // this.load.spritesheet('ufo', 'img/sprite-enemy-ufo.png', 75, 25, 2);

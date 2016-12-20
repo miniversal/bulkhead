@@ -63,7 +63,9 @@ bulkhead.prototype = {
 		// ship.body.collides(alienCollisionGroup, destroyShip, this);
 
 		// WEAPONS
-		turret = this.add.sprite(425, 208, 'turret');
+		turret = this.add.sprite(ship.x, ship.y, 'turret');
+        turret.animations.add('left', [0], 10, true);
+        turret.animations.add('right', [1], 10, true);
         turret.anchor.setTo(0.8, 0.5);
         //turret.scale.setTo(5,5)
         //this.physics.p2.enable(turret, false);
@@ -104,13 +106,13 @@ bulkhead.prototype = {
 	update: function(){
 
         //rotate asteroids
-        bg2.angle += 0.0125;
+        bg2.angle += 0.125;
 
         this.gamescore = score;
 		ship.body.setZeroVelocity();
         ship.body.rotation = 0;
 
-        // turret.body.setZeroVelocity();
+        //turret.body.setZeroVelocity();
 
         // aliens.forEachAlive(moveEnemies, this);
         // ufos.forEachAlive(moveUFOs, this);
@@ -134,33 +136,33 @@ bulkhead.prototype = {
 
         if (cursors.down.isDown || downKey.isDown){
             ship.body.moveDown(shipSpeed);
-            // turret.body.moveDown(shipSpeed);
+            turret.y = ship.y;
         }
 
         if (cursors.up.isDown || upKey.isDown){
             ship.body.moveUp(shipSpeed);
-            // turret.body.moveUp(shipSpeed);
+            turret.y = ship.y;
         }
         
         if (cursors.left.isDown || leftKey.isDown){
             ship.body.moveLeft(shipSpeed);
-            // turret.body.moveLeft(shipSpeed);
+            turret.x = ship.x;
             if(facing!='left') {
                 ship.animations.play('left');
+                turret.animations.play('left');
                 facing='left';
             }
         }
         if (cursors.right.isDown || rightKey.isDown){
             ship.body.moveRight(shipSpeed);
-            // turret.body.moveRight(shipSpeed);
+            turret.x = ship.x;
             if(facing!='right'){
                 ship.animations.play('right');
+                turret.animations.play('right');
                 facing='right';
             }
         }
 
-        turret.x = ship.x;
-        turret.y = ship.y;
         turret.rotation = this.physics.arcade.angleToPointer(turret) - Math.PI;
 
         this.game.world.wrap(ship, 0, true);                    
