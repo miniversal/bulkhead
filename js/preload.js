@@ -26,7 +26,7 @@ preload.prototype = {
   //       this.load.audio('music', 'audio/source.mp3');
         
         //this.load.image('background','img/bg-mountain-y-01.png');
-        this.load.image('bullet', 'img/bullet.png'); 
+        this.load.image('bullet', 'img/weapon-beam-gr.png'); 
         //this.load.image('friend', 'img/sprite-friend.png');
         this.load.spritesheet('ship','img/frog5-scaled.png', 200, 101, 2);
         this.load.spritesheet('turret', 'img/turret.png', 282, 108, 2);

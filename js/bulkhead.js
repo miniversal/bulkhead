@@ -5,7 +5,7 @@ var facing = 'right';
 
 //Weapon Systems
 var bullets = bullets;
-var fireRate = 100;
+var fireRate = 225;
 var nextFire = 0;
 
 var bulkhead = function(game){
@@ -55,8 +55,8 @@ bulkhead.prototype = {
         //ship.alpha = 0;
         //this.add.tween(ship).to({ alpha: 1}, 5000, Phaser.Easing.Linear.None, true, 3, 0, false);
         //We fade the player in slowly to give them a short invincibility
-		ship.animations.add('left', [0], 10, true);
-		ship.animations.add('right', [1], 10, true);
+		ship.animations.add('left', [0], 1, true);
+		ship.animations.add('right', [1], 1, true);
 		this.physics.p2.enable(ship, false);
 		ship.body.fixedRotation = true;
 		// ship.body.setCollisionGroup(playerCollisionGroup);
@@ -64,10 +64,10 @@ bulkhead.prototype = {
 
 		// WEAPONS
 		turret = this.add.sprite(ship.x, ship.y, 'turret');
-        turret.animations.add('left', [0], 10, true);
-        turret.animations.add('right', [1], 10, true);
+        turret.animations.add('left', [0], 1, true);
+        turret.animations.add('right', [1], 1, true);
         turret.anchor.setTo(0.8, 0.5);
-        //turret.scale.setTo(5,5)
+        turret.scale.setTo(0.3, 0.3);
         //this.physics.p2.enable(turret, false);
 
 		bullets = this.add.group();
@@ -130,8 +130,10 @@ bulkhead.prototype = {
 				nextFire = this.time.now + fireRate;
 				var bullet = bullets.getFirstExists(false);
 				bullet.reset(turret.x, turret.y);
-				bullet.rotation = this.physics.arcade.moveToPointer(bullet, 1000, this.input.activePointer, 500);
-			}
+                //The maxTime parameter controls how fast the shot will arrive at the point coord
+				//bullet.rotation = this.physics.arcade.moveToPointer(bullet, 1000, this.input.activePointer, 500);
+			     bullet.rotation = this.physics.arcade.moveToPointer(bullet, 500);
+            }
 		}        
 
         if (cursors.down.isDown || downKey.isDown){
@@ -149,6 +151,7 @@ bulkhead.prototype = {
             turret.x = ship.x;
             if(facing!='left') {
                 ship.animations.play('left');
+                turret.anchor.setTo(0.8, 0.5);
                 turret.animations.play('left');
                 facing='left';
             }
@@ -158,6 +161,7 @@ bulkhead.prototype = {
             turret.x = ship.x;
             if(facing!='right'){
                 ship.animations.play('right');
+                turret.anchor.setTo(0.25, 0.5);
                 turret.animations.play('right');
                 facing='right';
             }
