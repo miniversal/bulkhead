@@ -25,40 +25,40 @@ titleScreen.prototype = {
 		// logo.alpha = 0;
 		// this.add.tween(logo).to({ alpha: 1}, 8000, Phaser.Easing.Linear.None, true, 3, 0, false);
 		
-        var text = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '- START -');
-        
-        text.anchor.set(0.5);
-        text.align = 'center';
-        
-        text.font = 'Impact';
-        text.fontSize = 48;
-        text.fontWeight = 'bold';
+		var text = this.game.add.text(this.game.world.centerX, this.game.world.centerY, '- START -');
+		
+		text.anchor.set(0.5);
+		text.align = 'center';
+		
+		text.font = 'Impact';
+		text.fontSize = 48;
+		text.fontWeight = 'bold';
 
-        text.stroke = '#0066ff';
-        text.strokeThickness = 25;
-        text.fill = '#00ff00';
+		text.stroke = '#0066ff';
+		text.strokeThickness = 25;
+		text.fill = '#00ff00';
 
-        text.inputEnabled = true;
-        text.events.onInputDown.add(this.startGame, this);
+		text.inputEnabled = true;
+		text.events.onInputDown.add(this.startGame, this);
 
 		var creditsLink = this.game.add.text(this.game.world.centerX, this.game.world.centerY+75, '- CREDITS -');
-        
-        creditsLink.anchor.set(0.5);
-        creditsLink.align = 'center';
-        
-        creditsLink.font = 'Impact';
-        creditsLink.fontSize = 48;
-        creditsLink.fontWeight = 'bold';
+		
+		creditsLink.anchor.set(0.5);
+		creditsLink.align = 'center';
+		
+		creditsLink.font = 'Impact';
+		creditsLink.fontSize = 48;
+		creditsLink.fontWeight = 'bold';
 
-        creditsLink.stroke = '#0066ff';
-        creditsLink.strokeThickness = 25;
-        creditsLink.fill = '#00ff00';
+		creditsLink.stroke = '#0066ff';
+		creditsLink.strokeThickness = 25;
+		creditsLink.fill = '#00ff00';
 
-        creditsLink.inputEnabled = true;
-        creditsLink.events.onInputDown.add(this.viewCredits, this);
+		creditsLink.inputEnabled = true;
+		creditsLink.events.onInputDown.add(this.viewCredits, this);
 
-        //backgroundMusic = this.add.audio('music', 4, true, true);
-        //backgroundMusic.play();
+		//backgroundMusic = this.add.audio('music', 4, true, true);
+		//backgroundMusic.play();
 	},
 	startGame: function(){
 		this.game.state.start('BulkHead');
