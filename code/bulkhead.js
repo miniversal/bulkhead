@@ -31,19 +31,19 @@ bulkhead.prototype = {
 		bg2.anchor.setTo(0.5, 0.5);
 		this.world.setBounds(0, 0, 1920, 600);
 
-		map = this.add.tilemap('map');
-		map.addTilesetImage('ground_1x1');
-		map.addTilesetImage('walls_1x2');
-		map.addTilesetImage('tiles2');
-		layer = map.createLayer('Tile Layer 1');
-		layer.resizeWorld();
-		//  Set the tiles for collision.
-		//  Do this BEFORE generating the p2 bodies below.
-		map.setCollisionBetween(1, 12);
+		// map = this.add.tilemap('map');
+		// map.addTilesetImage('ground_1x1');
+		// map.addTilesetImage('walls_1x2');
+		// map.addTilesetImage('tiles2');
+		// layer = map.createLayer('Tile Layer 1');
+		// layer.resizeWorld();
+		// //  Set the tiles for collision.
+		// //  Do this BEFORE generating the p2 bodies below.
+		// map.setCollisionBetween(1, 12);
 		//  Convert the tilemap layer into bodies. Only tiles that collide (see above) are created.
 		//  This call returns an array of body objects which you can perform addition actions on if
 		//  required. There is also a parameter to control optimising the map build.
-		this.physics.p2.convertTilemap(map, layer);
+		// this.physics.p2.convertTilemap(map, layer);
 		this.physics.p2.restitution = 0.5;
 		this.physics.p2.gravity.y = playerGravity;
 
@@ -75,8 +75,10 @@ bulkhead.prototype = {
 		//ship.alpha = 0;
 		//this.add.tween(ship).to({ alpha: 1}, 5000, Phaser.Easing.Linear.None, true, 3, 0, false);
 		//We fade the player in slowly to give them a short invincibility
-		ship.animations.add('left', [0], 1, true);
-		ship.animations.add('right', [1], 1, true);
+		ship.animations.add('fly-left', [1], 1, true);
+		ship.animations.add('fly-right', [0], 1, true);
+		ship.animations.add('walk-left', [3], 1, true);
+		ship.animations.add('walk-right', [2], 1, true);
 		this.physics.p2.enable(ship, false);
 		ship.body.fixedRotation = true;
 		// ship.body.setCollisionGroup(playerCollisionGroup);
@@ -111,7 +113,7 @@ bulkhead.prototype = {
 		leftKey = this.input.keyboard.addKey(Phaser.Keyboard.A);
 		rightKey = this.input.keyboard.addKey(Phaser.Keyboard.D);
 		boostKey = this.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
-				jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+		modeToggleKey = this.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		//Cannot use spacebar to fire because of keyboard ghosting
 		fireButton = this.input.keyboard.addKey(Phaser.Keyboard.Z);
 
@@ -142,7 +144,7 @@ bulkhead.prototype = {
 		if(boostKey.isDown){
 			shipSpeed=475;
 		}else{
-				shipSpeed=300;
+			shipSpeed=300;
 		}
 
 		if (this.input.activePointer.isDown){
@@ -170,7 +172,11 @@ bulkhead.prototype = {
 			ship.body.moveLeft(shipSpeed);
 			turret.x = ship.x;
 			if(facing!='left') {
-					ship.animations.play('left');
+					if(playerGravity != 0){
+						ship.animations.play('walk-left');
+					}else{
+						ship.animations.play('fly-left');
+					}					
 					turret.anchor.setTo(0.8, 0.5);
 					turret.animations.play('left');
 					facing='left';
@@ -180,7 +186,11 @@ bulkhead.prototype = {
 			ship.body.moveRight(shipSpeed);
 			turret.x = ship.x;
 			if(facing!='right'){
-					ship.animations.play('right');
+					if(playerGravity != 0){
+						ship.animations.play('walk-right');
+					}else{
+						ship.animations.play('fly-right');
+					}
 					turret.anchor.setTo(0.25, 0.5);
 					turret.animations.play('right');
 					facing='right';
@@ -191,18 +201,19 @@ bulkhead.prototype = {
 
 		this.game.world.wrap(ship, 0, true);
 
-		if (jumpButton.isDown && game.time.now > jumpTimer && checkIfCanJump()){
-			ship.body.moveUp(300);
-			jumpTimer = game.time.now + 750;
+		if (modeToggleKey.isDown){
+			playerGravity = (playerGravity != 0) ? 0 : 300;
+			this.physics.p2.gravity.y = playerGravity;
 		}
 	},
 	render: function(){
 		// var zone = this.game.camera.deadzone;
-				// game.context.fillStyle = 'rgba(255,0,0,0.0)';
-				// game.context.fillRect(zone.x, zone.y, zone.width, zone.height);
-				//this.game.debug.cameraInfo(this.camera, 500, 32);
-				//this.game.debug.spriteCoords(ship, 32, 32);
-				// game.debug.text('Facing: ' + facing, 32, 113);
+		// game.context.fillStyle = 'rgba(255,0,0,0.0)';
+		// game.context.fillRect(zone.x, zone.y, zone.width, zone.height);
+		//this.game.debug.cameraInfo(this.camera, 500, 32);
+		//this.game.debug.spriteCoords(ship, 32, 32);
+		// game.debug.text('Facing: ' + facing, 32, 113);
+		this.game.debug.text('Gravity: ' + playerGravity, 32, 113);
 	},
 	goToTitle: function(){
 		this.game.state.start('TitleScreen');
